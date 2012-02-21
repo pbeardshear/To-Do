@@ -1,0 +1,12 @@
+<%-title = '<title>To Do - New Task</title>' %>
+<%-header = '<script type="text/javascript" src="/assets/js/newtask.js"></script>' %>
+
+<form method="post" action="/newTask">
+	<label>Name</label><input type="text" name="name" />
+	<label>Due Date</label>
+	<!-- Calendar -->
+	<input type="text" id="datepicker" name="dueDate" />
+	<label>How long do you think this task will take?</label><input type="number" name="estimate" />
+	<label>Auto update estimate?</label><input type="checkbox" name="autoUpdate" />
+	<input type="submit" value="Create Task" />
+</form>
