@@ -1,9 +1,24 @@
 <%- title = '<title>To Do - Home</title>' %>
+<div id="newTask">
+	<a href="/newTask">New Task</a>
+</div>
 <% if (isLoggedIn) { %>
-	<!-- Display the list of tasks here -->
-<% } else { %>
-	<!-- Display regular login screen, and button to create a new task -->
-	<div id="newTask">
-		<a href="/newTask">New Task</a>
+	<div>
+		<%-test.today%>
 	</div>
+	<div>tomorrow: <%-test.tomorrow%></div>
+	<div>this week: <%-test.thisWeek%></div>
+	<div>next week: <%-test.nextWeek%></div>
+	<div>this month: <%-test.thisMonth%></div>
+	<div>future: <%-test.future%></div>
+	<!-- Display the list of tasks here -->
+	<% for (var i = 0; i < tasks.length; i++) { %>
+		<% var task = tasks[i]; %>
+		<p>Name: <%-task.name%><br />
+			Due: <%-task.due%><br />
+			Estimate: <%-task.estimate%>
+		</p>
+	<% } %>
+<% } else { %>
+	<!-- Display regular login screen -->
 <% } %>

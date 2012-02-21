@@ -11,5 +11,14 @@
       $(document).ready(function () { });
     </script>
   </head>
-  <%-body%>
+  <body>
+	<div id="header">
+		<% if (!isLoggedIn) { %>
+			<a href="/login">Login</a><br /><a href="/login?register=true">Register</a>
+		<% } else { %>
+			<a href="/">Home</a>
+		<% } %>
+	</div>
+	<%-body%>
+  </body>
 </html>
