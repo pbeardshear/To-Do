@@ -1,0 +1,10 @@
+{
+	"name": "To-Do",
+	"version": "0.0.1",
+	"dependencies": {
+		"express": "",
+		"mongoose": "",
+		"ejs": "",
+		"connect-mongodb": ""
+	}
+}
