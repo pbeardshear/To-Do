@@ -23,7 +23,8 @@ exports.defineModels = function defineModels (mongoose, cb) {
 		group: { type: String },
 		due: { type: Date, required: true },
 		estimate: { type: String },
-		autoUpdate: { type: Boolean }
+		autoUpdate: { type: Boolean },
+		finished: { type: Boolean }
 	});
 	
     mongoose.model('User', User);

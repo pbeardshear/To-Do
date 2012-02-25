@@ -1,3 +1,16 @@
 body { margin: 0px; font-family: Trebuchet MS, sans-serif; font-size: 12px; }
-input { display: block; }
+h2 { font-weight: normal; font-family: Verdana, Trebuchet MS, sans-serif; font-size: 16px; }
 label { display: block; }
+label.inline-label { display: inline-block; }
+#container { margin: 25px; }
+#header { 
+	background-color: #BB3926; 
+	height: 75px;
+	text-align: right;
+	padding: 15px 80px; 
+	-moz-box-shadow: 0 0 5px 5px #888;
+	-webkit-box-shadow: 0 0 5px 5px#888;
+	box-shadow: 0 0 5px 5px #888;
+}
+#header a { text-decoration: none; color: #FFF; font-size: 14px; font-weight: bold; display: block; margin: 0px 15px; position: relative; float: right; text-align: center; padding: 5px 8px; }
+#header a:hover { background-color: #710000; }

@@ -7,6 +7,7 @@
 	<%-header%>
 	<link rel="stylesheet" type="text/css" href="/assets/stylesheets/main.css" />
 	<link rel="stylesheet" type="text/css" href="/assets/stylesheets/pepper-grinder/jquery-ui.css" />
+	<%-css%>
     <script>
       $(document).ready(function () { });
     </script>
@@ -14,11 +15,16 @@
   <body>
 	<div id="header">
 		<% if (!isLoggedIn) { %>
-			<a href="/login">Login</a><br /><a href="/login?register=true">Register</a>
+			<a href="/login">Login</a>
+			<a href="/login?register=true">Register</a>
 		<% } else { %>
+			<a href="/">Logout</a>
+			<a href="/newtask">New Task</a>
 			<a href="/">Home</a>
 		<% } %>
 	</div>
-	<%-body%>
+	<div id="container">
+		<%-body%>
+	</div>
   </body>
 </html>

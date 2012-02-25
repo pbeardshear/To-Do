@@ -1,24 +1,69 @@
-<%- title = '<title>To Do - Home</title>' %>
-<div id="newTask">
-	<a href="/newTask">New Task</a>
-</div>
+<% title = '<title>To Do - Home</title>' %>
+<% header = '<script type="text/javascript" src="/assets/js/index.js"></script>' %>
+<% css = '<link rel="stylesheet" type="text/css" href="/assets/stylesheets/index.css" />' %>
+
+<%
+	// Helper functions
+	function formatDate (date) {
+		var hours = date.getHours() % 12 || 12;
+		var pm = date.getHours() >= 12 && date.getHours() < 24 ? true : false;
+		return [hours, (pm ? 'pm' : 'am'), 'on', date.toLocaleDateString()].join(' ');
+	}
+%>
+
 <% if (isLoggedIn) { %>
-	<div>
-		<%-test.today%>
+	<div id="displayOptions">
+		<h2>Options</h2>
+		<label class="inline-label">Hide Empty Sections</label><input type="checkbox" name="hideEmpty" class="pref" /><br />
+		<label class="inline-label">Show Recently Finished</label><input type="checkbox" name="showRecentFinished" class="pref" /><br />
+		<label class="inline-label">Show Past Due</label><input type="checkbox" name="showPast" checked="checked" class="pref" />
 	</div>
-	<div>tomorrow: <%-test.tomorrow%></div>
-	<div>this week: <%-test.thisWeek%></div>
-	<div>next week: <%-test.nextWeek%></div>
-	<div>this month: <%-test.thisMonth%></div>
-	<div>future: <%-test.future%></div>
-	<!-- Display the list of tasks here -->
-	<% for (var i = 0; i < tasks.length; i++) { %>
-		<% var task = tasks[i]; %>
-		<p>Name: <%-task.name%><br />
-			Due: <%-task.due%><br />
-			Estimate: <%-task.estimate%>
-		</p>
-	<% } %>
+	<div id="taskList">
+	<% 
+		var nameMapping = {
+			past: 'Past Due',
+			today: 'Today',
+			tomorrow: 'Tomorrow',
+			thisWeek: 'This Week',
+			nextWeek: 'Next Week',
+			thisMonth: 'This Month',
+			future: 'A While'
+		};
+		for (var bin in tasks) {
+			if (tasks.hasOwnProperty(bin)) {
+				var collection = tasks[bin];
+				%><div class="timeGroup <%-bin%>Container"><h2><%-nameMapping[bin]%></h2></div><%
+				for (var i = 0; i < collection.length; i++) {
+					%>
+					<div class="task <%-bin%>">
+						<div class="task-column name-column">
+							<span><%-collection[i].name%></span>
+						</div>
+						<div class="task-column date-column">
+							<span>is due <em><%-formatDate(collection[i].due)%></em></span>
+							<span>it should take about <em><%-collection[i].estimate%></em> hours</span>
+						</div>
+						<div class="task-column action-column" id="finish-column">
+							<div class="action finish" value="<%-collection[i]._id%>"></div>
+						</div>
+						<div class="task-column action-column">
+							<div class="action delete"></div>
+						</div>
+					</div>
+					<%
+				}
+				if (tasks[bin].length == 0) {
+					// Display empty text
+					%>
+					<div class="taskEmpty">
+						<span>No tasks due.</span>
+					</div>
+					<%
+				}
+			}
+		}
+	%>
+	</div>
 <% } else { %>
 	<!-- Display regular login screen -->
 <% } %>

@@ -23,6 +23,7 @@ function getTimeDifference (start, end, normalize) {
 
 function loadUser (req, res, next) {
 	res.local('header', '');
+	res.local('css', '');
 	res.local('title', '<title>To Do</title>');
 	User.findById(req.session.userID, function (err, user) {
 		if (err) {
@@ -49,13 +50,16 @@ app.get('/', function(request, response) {
 	if (request.isLoggedIn) {
 		console.log('im logged in');
 		// Retrieve the list of tasks for this user
-		Task.find({ owner: request.currentUser }, function (err, tasks) {
+		Task.find({ owner: request.currentUser, finished: false }, function (err, tasks) {
 			var today = new Date();
 			// Sort the tasks by due date, and add some meta info so that the client can render them more easily
-			var bins = { today: [], tomorrow: [], thisWeek: [], nextWeek: [], thisMonth: [], future: [] };
+			var bins = { past: [], today: [], tomorrow: [], thisWeek: [], nextWeek: [], thisMonth: [], future: [] };
 			for (var i = 0; i < tasks.length; i++) {
 				var difference = getTimeDifference(today, tasks[i].due, TIME_CONSTANTS.msInDay);
-				if (difference <= 1) {
+				if (difference < 0) {
+					bins.past.push(tasks[i]);
+				}
+				else if (difference <= 1) {
 					bins[today.getDate() == tasks[i].due.getDate() ? 'today' : 'tomorrow'].push(tasks[i]);
 				} else if (difference > 1 && tasks[i].due.getDay() > today.getDay()) {
 					bins.thisWeek.push(tasks[i]);
@@ -64,10 +68,10 @@ app.get('/', function(request, response) {
 				} else if (today.getMonth() == tasks[i].due.getMonth()) {
 					bins.thisMonth.push(tasks[i]);
 				} else {
-					bins.future.push(tasks[i]);s
+					bins.future.push(tasks[i]);
 				}
 			}
-			response.render('index', { tasks: tasks, test: bins });
+			response.render('index', { tasks: bins });
 		});
 	} else {
 		response.render('index', { tasks: [] });
@@ -123,8 +127,14 @@ app.post('/newTask', function (request, response) {
 	// TODO: validation check
 	// Get the post data
 	var body = request.body;
-	console.log(body);
-	(new Task({ owner: request.currentUser, name: body.name, due: body.dueDate, estimate: body.estimate, autoUpdate: body.autoUpdate })
+	// Format the date
+	var hours = parseInt(body.dueTime) + (body.ampm == 'PM' ? 12 : 0);
+	console.log(body.dueDate);
+	console.log('due time:', body.dueTime);
+	console.log('hours:', hours);
+	var date = (new Date(Date.parse(body.dueDate) + hours*TIME_CONSTANTS.msInHour)).toLocaleString();
+	console.log(date);
+	(new Task({ owner: request.currentUser, name: body.name, due: date, estimate: body.estimate, autoUpdate: body.autoUpdate, finished: false })
 		.save(function (err, cost) {
 			console.log('got here', cost);
 			if (err) {
@@ -136,6 +146,27 @@ app.post('/newTask', function (request, response) {
 			}
 		})
 	);
+});
+
+app.post('/updateTask', function (request, response) {
+	console.log('got update');
+	var updateParams = request.body.params;
+	console.log(updateParams);
+	if (updateParams) {
+		Task.findOne({ _id: updateParams.id }, function (err, task) {
+			if (task) {
+				for (var i in updateParams) {
+					if (updateParams.hasOwnProperty(i) && i !== 'id') {
+						task[i] = updateParams[i];
+					}
+					
+				}
+				task.save(function () {
+					response.send({ success: true });
+				})
+			}
+		});
+	}
 });
 
 app.get('/:id', function(request, response) {
